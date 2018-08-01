@@ -1,0 +1,322 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     12179,        314]
+NotebookOptionsPosition[     10549,        276]
+NotebookOutlinePosition[     10901,        292]
+CellTagsIndexPosition[     10858,        289]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Pentagons", "Title",
+ CellChangeTimes->{{3.742099971735733*^9, 
+  3.742099976021674*^9}},ExpressionUUID->"b62e7043-7b56-41ff-a719-\
+b744b3f24122"],
+
+Cell["\<\
+In this notebook, we figure out the basics of drawing shapes in mathematica \
+and automating replacement rules\
+\>", "Text",
+ CellChangeTimes->{{3.7420999795422163`*^9, 
+  3.742100024620014*^9}},ExpressionUUID->"c43c23a7-631d-4def-bb9c-\
+b3838199d1e9"],
+
+Cell[CellGroupData[{
+
+Cell["Drawing pentagons", "Section",
+ CellChangeTimes->{{3.742100028612062*^9, 
+  3.7421000369877577`*^9}},ExpressionUUID->"5078ac68-bb95-4cb5-98f0-\
+9724e563b5b3"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["l"], "Input",
+ CellChangeTimes->{{3.74210242512253*^9, 3.742102426611236*^9}},
+ CellLabel->"In[13]:=",ExpressionUUID->"e50cac44-f4ad-49d5-ad08-540f2b2042a0"],
+
+Cell[BoxData[
+ RowBox[{"Line", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"0", ",", "0"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "0"}], "}"}]}], "}"}], "]"}]], "Output",
+ CellChangeTimes->{3.742102426928113*^9},
+ CellLabel->"Out[13]=",ExpressionUUID->"c15eb81f-1960-4345-aa57-3e1e490e81d7"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{"l", "=", 
+   RowBox[{"Line", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"0", ",", "0"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "0"}], "}"}]}], "}"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.7421022607572937`*^9, 3.742102284437707*^9}, {
+  3.742102380521537*^9, 3.742102380781888*^9}},
+ CellLabel->"In[8]:=",ExpressionUUID->"530ecf6b-687f-4a8f-bf2b-c07286b8a970"],
+
+Cell[BoxData[
+ GraphicsBox[LineBox[{{0, 0}, {1, 0}}]]], "Output",
+ CellChangeTimes->{{3.7421022733930798`*^9, 3.7421022848439713`*^9}, 
+   3.7421023818629627`*^9},
+ CellLabel->"Out[8]=",ExpressionUUID->"926de102-9c0c-4bee-a44b-02c10bc31b49"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"nextCoords", "[", 
+    RowBox[{"coords1_", ",", "coords2_", ",", "angle_"}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "coords3", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"coords3", " ", "=", " ", 
+       RowBox[{
+        RowBox[{"2", "*", "coords2"}], " ", "-", " ", "coords1"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"RotationTransform", "[", 
+        RowBox[{"angle", ",", "coords2"}], "]"}], "[", "coords3", "]"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"point1", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";", " ", 
+  RowBox[{"point2", "=", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Graphics", "[", 
+  RowBox[{"Line", "[", 
+   RowBox[{"{", 
+    RowBox[{"point1", ",", "point2", ",", 
+     RowBox[{"nextCoords", "[", 
+      RowBox[{"point1", ",", "point2", ",", 
+       RowBox[{"Pi", "-", 
+        RowBox[{"3", 
+         RowBox[{"Pi", "/", "5"}]}]}]}], "]"}]}], "}"}], "]"}], 
+  "]"}]}], "Input",
+ CellChangeTimes->{{3.742102442039103*^9, 3.742102559143456*^9}, {
+  3.7421025952421417`*^9, 3.7421027679743853`*^9}, {3.742103215019927*^9, 
+  3.7421032310636463`*^9}},
+ CellLabel->"In[41]:=",ExpressionUUID->"5bd0f39c-d7fb-4431-9f79-9de0d068dbd5"],
+
+Cell[BoxData[
+ GraphicsBox[
+  LineBox[NCache[{{0, 0}, {1, 0}, {
+     Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+      Rational[1, 2] (-1 + 5^Rational[1, 2]), 
+      Rational[1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+       Rational[1, 2]}}, {{0, 0}, {1, 0}, {1.3090169943749475`, 
+     0.9510565162951535}}]]]], "Output",
+ CellChangeTimes->{{3.742102743626655*^9, 3.742102768506544*^9}, {
+  3.742103216662734*^9, 3.742103231495099*^9}},
+ CellLabel->"Out[43]=",ExpressionUUID->"6552dfd5-c464-4f84-bce7-4fed611ba351"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"pentagon", "[", 
+    RowBox[{"coords1_", ",", "coords2_"}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"i", ",", 
+       RowBox[{"l", "=", 
+        RowBox[{"{", 
+         RowBox[{"coords1", ",", "coords2"}], "}"}]}]}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"For", "[", 
+       RowBox[{
+        RowBox[{"i", "=", "0"}], ",", " ", 
+        RowBox[{"i", "<", "3"}], ",", " ", 
+        RowBox[{"i", "++"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"AppendTo", "[", 
+          RowBox[{"l", ",", 
+           RowBox[{"nextCoords", "[", 
+            RowBox[{
+             RowBox[{"l", "\[LeftDoubleBracket]", 
+              RowBox[{"-", "2"}], "\[RightDoubleBracket]"}], ",", 
+             RowBox[{"l", "\[LeftDoubleBracket]", 
+              RowBox[{"-", "1"}], "\[RightDoubleBracket]"}], ",", 
+             RowBox[{"2", 
+              RowBox[{"Pi", "/", "5"}]}]}], "]"}]}], "]"}], ";"}]}], 
+       "\[IndentingNewLine]", "]"}], ";", 
+      RowBox[{"Append", "[", 
+       RowBox[{"l", ",", "coords1"}], "]"}]}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]", "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.7421028035467997`*^9, 3.742102832761623*^9}, {
+  3.742102931228026*^9, 3.7421031248536243`*^9}, {3.74210317634191*^9, 
+  3.742103205664836*^9}, {3.742103236027288*^9, 3.742103267255417*^9}},
+ CellLabel->"In[50]:=",ExpressionUUID->"f1c27447-693a-466c-b88f-7c6c094e886e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"point1", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "0"}], "}"}]}], ";", " ", 
+  RowBox[{"point2", "=", 
+   RowBox[{"{", 
+    RowBox[{"1", ",", "0"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Graphics", "[", 
+  RowBox[{"Line", "[", 
+   RowBox[{"pentagon", "[", 
+    RowBox[{"point1", ",", "point2"}], "]"}], "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.742103147630926*^9, 3.742103158180706*^9}},
+ CellLabel->"In[51]:=",ExpressionUUID->"53b3bd36-b437-48c3-a467-25b244110e02"],
+
+Cell[BoxData[
+ GraphicsBox[
+  LineBox[NCache[{{0, 0}, {1, 0}, {
+     Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+      Rational[1, 2] (-1 + 5^Rational[1, 2]), 
+      Rational[1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+       Rational[1, 2]}, {
+     Rational[1, 4] (-5 - 5^Rational[1, 2]) + 
+      Rational[1, 4] (5 + 5^Rational[1, 2]) + 
+      Rational[1, 4] (-1 + 5^Rational[1, 2]) (-1 + 
+        2 (Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+          Rational[1, 2] (-1 + 5^Rational[1, 2]))), 
+      Rational[1, 4] (-1 + 
+        5^Rational[1, 2]) (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+        Rational[1, 2] + 
+      Rational[1, 8] ((2 (5 + 5^Rational[1, 2]))^Rational[1, 2] - (
+         10 (5 + 5^Rational[1, 2]))^Rational[1, 2]) + 
+      Rational[1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+        Rational[1, 2] (-1 + 
+        2 (Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+          Rational[1, 2] (-1 + 5^Rational[1, 2])))}, {
+     Rational[1, 4] 5^Rational[1, 2] (1 + 5^Rational[1, 2]) + 
+      Rational[1, 4] (-1 + 5^Rational[1, 2]) (
+        Rational[1, 2] (1 - 5^Rational[1, 2]) + 
+        Rational[1, 4] (-5 + 5^Rational[1, 2]) + 
+        2 (Rational[1, 4] (-5 - 5^Rational[1, 2]) + 
+          Rational[1, 4] (5 + 5^Rational[1, 2]) + 
+          Rational[1, 4] (-1 + 5^Rational[1, 2]) (-1 + 
+            2 (Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+              Rational[1, 2] (-1 + 5^Rational[1, 2]))))) + 
+      Rational[-1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^Rational[1, 2] (
+        Rational[-1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+          Rational[1, 2] + 
+        2 (Rational[1, 4] (-1 + 
+            5^Rational[1, 2]) (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+            Rational[1, 2] + 
+          Rational[
+            1, 8] ((2 (5 + 5^Rational[1, 2]))^Rational[1, 2] - (
+             10 (5 + 5^Rational[1, 2]))^Rational[1, 2]) + 
+          Rational[1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+            Rational[1, 2] (-1 + 
+            2 (Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+              Rational[1, 2] (-1 + 5^Rational[1, 2]))))), 
+      Rational[-1, 8] (-3 + 5^Rational[1, 2]) (1 + 
+        5^Rational[1, 2]) (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+        Rational[1, 2] + 
+      Rational[1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^Rational[1, 2] (
+        Rational[1, 2] (1 - 5^Rational[1, 2]) + 
+        Rational[1, 4] (-5 + 5^Rational[1, 2]) + 
+        2 (Rational[1, 4] (-5 - 5^Rational[1, 2]) + 
+          Rational[1, 4] (5 + 5^Rational[1, 2]) + 
+          Rational[1, 4] (-1 + 5^Rational[1, 2]) (-1 + 
+            2 (Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+              Rational[1, 2] (-1 + 5^Rational[1, 2]))))) + 
+      Rational[1, 4] (-1 + 5^Rational[1, 2]) (
+        Rational[-1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+          Rational[1, 2] + 
+        2 (Rational[1, 4] (-1 + 
+            5^Rational[1, 2]) (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+            Rational[1, 2] + 
+          Rational[
+            1, 8] ((2 (5 + 5^Rational[1, 2]))^Rational[1, 2] - (
+             10 (5 + 5^Rational[1, 2]))^Rational[1, 2]) + 
+          Rational[1, 2] (Rational[1, 2] (5 + 5^Rational[1, 2]))^
+            Rational[1, 2] (-1 + 
+            2 (Rational[1, 4] (5 - 5^Rational[1, 2]) + 
+              Rational[1, 2] (-1 + 5^Rational[1, 2])))))}, {0, 0}}, {{0, 0}, {
+     1, 0}, {1.3090169943749475`, 0.9510565162951535}, {0.5000000000000001, 
+     1.5388417685876268`}, {-0.30901699437494723`, 0.9510565162951538}, {0, 
+     0}}]]]], "Output",
+ CellChangeTimes->{{3.74210315868312*^9, 3.7421032081704493`*^9}, {
+  3.742103239874606*^9, 3.742103269924234*^9}},
+ CellLabel->"Out[52]=",ExpressionUUID->"7d7fc0c9-ddfd-4ccc-82fc-84b39cade0df"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Replacing smaller pentagons", "Section",
+ CellChangeTimes->{{3.742103306770751*^9, 
+  3.742103333095228*^9}},ExpressionUUID->"79cdef4e-3d99-4210-8a1b-\
+90db2716a25a"]
+}, Open  ]]
+},
+WindowSize->{808, 755},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
+FrontEndVersion->"11.3 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 5, \
+2018)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 152, 3, 98, "Title",ExpressionUUID->"b62e7043-7b56-41ff-a719-b744b3f24122"],
+Cell[735, 27, 262, 6, 35, "Text",ExpressionUUID->"c43c23a7-631d-4def-bb9c-b3838199d1e9"],
+Cell[CellGroupData[{
+Cell[1022, 37, 164, 3, 67, "Section",ExpressionUUID->"5078ac68-bb95-4cb5-98f0-9724e563b5b3"],
+Cell[CellGroupData[{
+Cell[1211, 44, 171, 2, 30, "Input",ExpressionUUID->"e50cac44-f4ad-49d5-ad08-540f2b2042a0"],
+Cell[1385, 48, 328, 9, 34, "Output",ExpressionUUID->"c15eb81f-1960-4345-aa57-3e1e490e81d7"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1750, 62, 472, 12, 30, "Input",ExpressionUUID->"530ecf6b-687f-4a8f-bf2b-c07286b8a970"],
+Cell[2225, 76, 241, 4, 449, "Output",ExpressionUUID->"926de102-9c0c-4bee-a44b-02c10bc31b49"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2503, 85, 1461, 38, 178, "Input",ExpressionUUID->"5bd0f39c-d7fb-4431-9f79-9de0d068dbd5"],
+Cell[3967, 125, 518, 10, 282, "Output",ExpressionUUID->"6552dfd5-c464-4f84-bce7-4fed611ba351"]
+}, Open  ]],
+Cell[4500, 138, 1560, 37, 178, "Input",ExpressionUUID->"f1c27447-693a-466c-b88f-7c6c094e886e"],
+Cell[CellGroupData[{
+Cell[6085, 179, 534, 13, 52, "Input",ExpressionUUID->"53b3bd36-b437-48c3-a467-25b244110e02"],
+Cell[6622, 194, 3712, 72, 360, "Output",ExpressionUUID->"7d7fc0c9-ddfd-4ccc-82fc-84b39cade0df"]
+}, Open  ]]
+}, Open  ]],
+Cell[10361, 270, 172, 3, 67, "Section",ExpressionUUID->"79cdef4e-3d99-4210-8a1b-90db2716a25a"]
+}, Open  ]]
+}
+]
+*)
+
