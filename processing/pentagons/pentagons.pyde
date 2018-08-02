@@ -1,3 +1,7 @@
+import sys
+print(sys.executable)
+
+
 def setup():
     size(480, 120)
 

@@ -75,15 +75,9 @@ class Tiling(object):
         self.tiles = start_tiles
 
     def deflate(self, iterations=1):
-    ''' Deflates each tile'''
+        ''' Deflates each tile'''
         for i in range(iterations):
             new_tiles = []
             for tile in self.tiles:
                 new_tiles += list(tile.deflate())
             self.tiles = new_tiles
-
-
-
-
-
-
