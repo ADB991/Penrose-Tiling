@@ -43,6 +43,11 @@ class Pentagon(object):
         for v in self.vertices[start:]: yield v
         yield self.vertices[0]
 
+    def loop_vertices_as_array(self, start=0):
+        '''generates all vertex 0, 1, ... 0'''
+        return np.array(list(self.loop_vertices()))
+
+
     def deflate(self):
         ''' Returns an array of tile objects
             In this case, one pentagon per vertex and one at the centre
@@ -58,11 +63,24 @@ class Pentagon(object):
         # the pentagon at the centre
         v0, v1 = self.vertices[:2] #grab the two vertices
         displacement = PHI_SCALE * (v1-v0)
+        v1 = v0 + displacement #rescale seconf vertex
         v0 = np.array(v1 + displacement*PHI_ROTATION)[0]
         v1 = np.array(v0 + displacement*CENTRE_PHI_ROTATION)[0]
         yield Pentagon(v0,v1)
 
 
+class Tiling(object):
+    ''' Contains many tiles inside which can be deflated'''
+    def __init__(self, start_tiles):
+        self.tiles = start_tiles
+
+    def deflate(self, iterations=1):
+    ''' Deflates each tile'''
+        for i in range(iterations):
+            new_tiles = []
+            for tile in self.tiles:
+                new_tiles += list(tile.deflate())
+            self.tiles = new_tiles
 
 
 
