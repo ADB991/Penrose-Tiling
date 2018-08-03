@@ -191,24 +191,36 @@ class  Edge(object):
 
 class Tile(object):
 
-        def __init__(self, edge):
-            if edge.colour == 'g':
-                self.build_from_green(edge)
-            else: self.build_from_red(edge)
+    def __init__(self, edge):
+        if edge.colour == 'g':
+            self.build_from_green(edge)
+        else: self.build_from_red(edge)
 
-        def build_from_green(edge):
-            raise NotImplemented
+    def build_from_green(edge):
+        raise NotImplemented
 
-        def build_from_red(edge):
-            raise NotImplemented
+    def build_from_red(edge):
+        raise NotImplemented
 
-        #this will be overridden for the aware tile
-        def assign(self, vertices, edges):
-            self.vertices = tuple(vertices)
-            self.edges = tuple(edges)
+    #this will be overridden for the aware tile
+    def assign(self, vertices, edges):
+        self.vertices = tuple(vertices)
+        self.edges = tuple(edges)
 
-        def __hash__(self):
-            return hash((self.vertices, self.edges))
+    def __hash__(self):
+        return hash((self.vertices, self.edges))
+
+    def bisect_and_scale(self, centre, v1, v2, factor):
+        ''' This is handy in building the last vertex.
+            Obtains the vector bisecting the angle v1_self_v2
+            Scales it by (1+height/bisector*factor)
+            and returns a new vertex, same colour as self, there.
+        '''
+        bisector = 0.5*sum([v1-centre, v2-centre])
+        height = abs(v1-v2)
+        additonal_distance = height/abs(bisector)*factor
+        displacement = (1.0+additonal_distance)*bisector
+        return Vertex(displacement+centre, centre.colour)
 
 class Kite(Tile):
 
@@ -218,7 +230,7 @@ class Kite(Tile):
         # need only to rotate the first one through 72 degrees
         angle = 72 if not clockwise else -72
         new_black = white.rotate_vertex(black, 72)
-        new_white = white.bisect_and_scale(black, new_black, FACTORS['green_kite'])
+        new_white = self.bisect_and_scale(white, black, new_black, FACTORS['green_kite'])
 
         # assign
         vertices = white, black, new_white, new_black
@@ -245,7 +257,7 @@ class BetterKite(Kite):
         # need only to rotate the first one through 72 degrees
         angle = 72 if not clockwise else -72
         new_black = white.rotate_vertex(black, 72)
-        new_white = white.bisect_and_scale(black, new_black, FACTORS['green_kite'])
+        new_white = self.bisect_and_scale(white, black, new_black, FACTORS['green_kite'])
 
         # assign
         vertices = white, black, new_white, new_black
