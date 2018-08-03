@@ -22,9 +22,9 @@ ROTATION_MATRICES ={
         }
 
 FACTORS= {
-    'green_kite': math.cos(0.2*math.pi)/math.tan(0.1*math.pi),
-    'red_kite': math.tan(0.1*math.pi)/math.cos(0.2*math.pi),
-    'green_dart': 0
+    'green_kite': math.tan(0.1*math.pi),
+    'red_kite': 1./math.tan(0.2*math.pi),
+    'green_dart': -math.tan(0.3*math.pi)
 }
 
 
@@ -225,9 +225,9 @@ class Kite(Tile):
         new_black = white.rotate_vertex(black, angle)
         bisector = white.bisect(black, new_black)
         height = abs(black-new_black)
-        additonal_distance = height/abs(bisector)*FACTORS['green_kite']
-        displacement = (1.0+additonal_distance)*bisector
-        new_white = Vertex(displacement+black, 'w')
+        additonal_scale = height/abs(bisector)*FACTORS['green_kite']
+        displacement = (1.0+additonal_scale)*bisector
+        new_white = Vertex(displacement+white, 'w')
 
         # assign
         vertices = white, black, new_white, new_black
@@ -244,7 +244,11 @@ class Kite(Tile):
         # need only to rotate the first one through 144 degrees
         angle = 144 if not clockwise else -144
         new_black = white.rotate_vertex(black, angle)
-        new_white = self.bisect_and_scale(white, black, new_black, FACTORS['red_kite'])
+        bisector = white.bisect(black, new_black)
+        height = abs(black-new_black)
+        additonal_scale =  height/abs(bisector)*FACTORS['red_kite']
+        displacement = (1.0+additonal_scale)*bisector
+        new_white = Vertex(displacement+white, 'w')
 
         # assign
         vertices = white, black, new_white, new_black
@@ -267,7 +271,8 @@ class Dart(Tile):
         # need only to rotate the first one through 72 degrees
         angle = 72 if not clockwise else -72
         new_white = black.rotate_vertex(white, angle)
-        new_black = self.bisect_and_scale(black, white, new_white, FACTORS['green_dart'])
+        new_black = self.bisect_and_scale(black, white, new_white,FACTORS['green_dart'])
+
 
 
     def __rep__(self):
@@ -281,7 +286,7 @@ class BetterKite(Kite):
         # getting the other black edge
         # need only to rotate the first one through 72 degrees
         angle = 72 if not clockwise else -72
-        new_black = white.rotate_vertex(black, 72)
+        new_black = white.rotate_vertex(black, angle)
         new_white = self.bisect_and_scale(white, black, new_black, FACTORS['green_kite'])
 
         # assign
@@ -293,5 +298,21 @@ class BetterKite(Kite):
                     )
         self.assign(vertices, edges)
 
+    def build_from_red(self, edge, clockwise=False):
+        white, black = edge.white_black
+        # getting the other black edge
+        # need only to rotate the first one through 144 degrees
+        angle = 144 if not clockwise else -144
+        new_black = white.rotate_vertex(black, angle)
+        new_white = self.bisect_and_scale(white, black, new_black, FACTORS['red_kite'])
+
+        # assign
+        vertices = white, black, new_white, new_black
+        edges = (  edge, 
+                        Edge(black, new_white,'r'), 
+                        Edge(new_white,new_black,'r'),
+                        Edge(new_black, white, 'g')
+                    )
+        self.assign(vertices, edges)
 
 
