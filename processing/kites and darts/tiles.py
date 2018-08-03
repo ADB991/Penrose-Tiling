@@ -185,10 +185,10 @@ class  Edge(object):
 
 class Tile(object):
 
-    def __init__(self, edge):
+    def __init__(self, edge,clockwise=False):
         if edge.colour == 'g':
-            self.build_from_green(edge)
-        else: self.build_from_red(edge)
+            self.build_from_green(edge,clockwise)
+        else: self.build_from_red(edge,clockwise)
 
     def build_from_green(edge):
         raise NotImplemented
