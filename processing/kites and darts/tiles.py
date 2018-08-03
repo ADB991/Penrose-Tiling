@@ -25,7 +25,7 @@ FACTORS= {
     'green_kite': math.tan(0.1*math.pi),
     'red_kite': 1./math.tan(0.2*math.pi),
     'green_dart': -math.tan(0.1*math.pi),
-    'red_dart': -math.cos(0.3*math.pi)
+    'red_dart': -math.cos(0.1*math.pi)
 }
 
 
