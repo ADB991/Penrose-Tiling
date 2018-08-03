@@ -14,6 +14,18 @@ the edges and vertices will be used to decide which shape to put
 
 import math
 
+ROTATION_MATRICES ={
+        72 : (math.cos(.4*math.pi), math.sin(.4*math.pi)),
+        144: (math.cos(.8*math.pi), math.sin(.8*math.pi)),
+        -72 : (math.cos(-.4*math.pi), math.sin(-.4*math.pi)),
+        -144: (math.cos(-.8*math.pi), math.sin(-.8*math.pi)),
+        }
+
+FACTORS= {
+    'green_kite': math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
+}
+
+
 
 class Vector(list):
 
@@ -56,15 +68,18 @@ class Vector(list):
     def __truediv__(self, other):
         return self*float(1/other)
 
+    def __radd__(self, other):
+        return self+other
 
     def __rmul__(self, other):
         return self*other
 
-
-
     def rotate_vector(self, other, angle):
         diff = other - self
-        cos, sin = math.cos(angle), math.sin(angle)
+        if angle in ROTATION_MATRICES.keys():
+            cos, sin = ROTATION_MATRICES[angle]
+        else:
+            cos, sin = math.cos(angle), math.sin(angle)
         rotated = [cos*diff[0] - sin*diff[1], sin*diff[0] + cos*diff[1]]
         return self + Vector(rotated)
         
@@ -107,6 +122,25 @@ class Vertex(Vector):
     @property
     def vector(self):
         return Vector(list(self.coords))
+
+    def rotate_vertex(self, other, angle):
+        ''' Returns a vertex same colour as other, 
+        rotated about self by angle'''
+        return Vertex(self.rotate_vector(other, angle), other.colour)
+
+    def bisect_and_scale(self, v1, v2, factor):
+        ''' This is handy in building the last vertex.
+            Obtains the vector bisecting the angle v1_self_v2
+            Scales it by (1+height/bisector*factor)
+            and returns a new vertex, same colour as self, there.
+        '''
+        bisector = 0.5*sum([v1-self, v2-self])
+        height = abs(v1-v2)
+        additonal_distance = height/abs(bisector)*factor
+        displacement = (1.0+additonal_distance)*bisector
+        return Vertex(displacement+self, self.colour)
+
+
 
 
 class  Edge(object):
@@ -182,22 +216,10 @@ class Kite(Tile):
         white, black = edge.white_black
         # getting the other black edge
         # need only to rotate the first one through 72 degrees
-        angle = math.pi*2.0/5.0
-        if clockwise: angle *= -1
-        new_black_vector = white.rotate_vector(black, angle)
-        new_black = Vertex(new_black_vector, 'b')
+        angle = 72 if not clockwise else -72
+        new_black = white.rotate_vertex(black, 72)
+        new_white = white.bisect_and_scale(black, new_black, FACTORS['green_kite'])
 
-        # getting the last vertex
-        # we bisect the two green edges and 
-        white_to_black = black - white
-        white_to_new_black = new_black - white
-        direction = .5*(white_to_black + white_to_new_black)
-        height = abs(black - new_black)
-        additonal_distance = height/abs(direction)*math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
-        displacement = (1.0+additonal_distance)*direction
-        new_white_vector = white + displacement
-        new_white = Vertex(tuple(new_white_vector), 'w')
-        
         # assign
         vertices = white, black, new_white, new_black
         edges = (  edge, 
@@ -207,13 +229,32 @@ class Kite(Tile):
                     )
         self.assign(vertices, edges)
 
+    def build_from_red(self, edge, clockwise=False):
+        pass
+
     def __rep__(self):
         return 'Kite with '+str(self.vertices)
 
 
 
+class BetterKite(Kite):
 
+    def build_from_green(self, edge, clockwise=False):
+        white, black = edge.white_black
+        # getting the other black edge
+        # need only to rotate the first one through 72 degrees
+        angle = 72 if not clockwise else -72
+        new_black = white.rotate_vertex(black, 72)
+        new_white = white.bisect_and_scale(black, new_black, FACTORS['green_kite'])
 
+        # assign
+        vertices = white, black, new_white, new_black
+        edges = (  edge, 
+                        Edge(black, new_white,'r'), 
+                        Edge(new_white,new_black,'r'),
+                        Edge(new_black, white, 'g')
+                    )
+        self.assign(vertices, edges)
 
 
 
