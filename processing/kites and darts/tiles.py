@@ -22,7 +22,8 @@ ROTATION_MATRICES ={
         }
 
 FACTORS= {
-    'green_kite': math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
+    'green_kite': math.cos(0.2*math.pi)/math.tan(0.1*math.pi),
+    'red_kite': math.tan(0.1*math.pi)/math.cos(0.2*math.pi),
 }
 
 
@@ -229,7 +230,7 @@ class Kite(Tile):
         # getting the other black edge
         # need only to rotate the first one through 72 degrees
         angle = 72 if not clockwise else -72
-        new_black = white.rotate_vertex(black, 72)
+        new_black = white.rotate_vertex(black, angle)
         new_white = self.bisect_and_scale(white, black, new_black, FACTORS['green_kite'])
 
         # assign
@@ -242,7 +243,21 @@ class Kite(Tile):
         self.assign(vertices, edges)
 
     def build_from_red(self, edge, clockwise=False):
-        pass
+        white, black = edge.white_black
+        # getting the other black edge
+        # need only to rotate the first one through 144 degrees
+        angle = 144 if not clockwise else -144
+        new_black = white.rotate_vertex(black, angle)
+        new_white = self.bisect_and_scale(white, black, new_black, FACTORS['red_kite'])
+
+        # assign
+        vertices = white, black, new_white, new_black
+        edges = (  edge, 
+                        Edge(black, new_white,'g'), 
+                        Edge(new_white,new_black,'g'),
+                        Edge(new_black, white, 'r')
+                    )
+        self.assign(vertices, edges)
 
     def __rep__(self):
         return 'Kite with '+str(self.vertices)
