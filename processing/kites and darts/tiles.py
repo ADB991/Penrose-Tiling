@@ -305,3 +305,27 @@ class BetterKite(Kite):
     pass
 
 
+
+def star(edge):
+    '''returns a list of tiles in the shape of a star'''
+    if edge.colour != 'g':
+        raise ValueError
+    tile_list = []
+    current_edge = edge
+    for i in range(5):
+        current_tile = Dart(current_edge)
+        tile_list.append(current_tile)
+        current_edge = current_tile.edges[-1]
+    return tile_list
+
+def sun(edge):
+    '''returns a list of tiles in the shape of a star'''
+    if edge.colour != 'g':
+        raise ValueError
+    tile_list = []
+    current_edge = edge
+    for i in range(5):
+        current_tile = Kite(current_edge)
+        tile_list.append(current_tile)
+        current_edge = current_tile.edges[-1]
+    return tile_list
