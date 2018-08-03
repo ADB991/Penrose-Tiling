@@ -19,8 +19,9 @@ class Vector(list):
 
     def __init__(self, l=[]):
         ''' converts to float to avoid surprises later on'''
-        if type(l) is not list:
-            raise ValueError
+        if type(l) not in (list, tuple):
+            inner_list = list(l)
+        else: inner_list = l
         float_list = [float(x) for x in l]
         super(Vector, self).__init__(float_list)
 
@@ -29,6 +30,11 @@ class Vector(list):
 
     def __abs__(self):
         return math.sqrt(sum([x**2 for x in self]))
+
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            raise ValueError
+        return list(self) == list(other)
 
     def __add__(self, other):
         if type(self) is type(other):
@@ -78,15 +84,19 @@ class Vector(list):
         return Vector([x1 * float(other) for x1 in self])
 
 
-class Vertex(object):
+class Vertex(Vector):
     ''' A vertex has coordinates, and colour'''
     def __init__(self, coords, colour):
-        self.coords = coords
+        super(Vertex, self).__init__(coords)
         self.colour = colour
 
+    @property
+    def coords(self):
+        return tuple(self)
+    
     def __repr__(self):
         colour = "White" if self.colour == 'w' else 'Black'
-        return colour+' vertex at '+str(self.coords)
+        return colour+' vertex at '+super(Vertex, self).__repr__()
 
     def __hash__(self):
         return hash((self.coords, self.colour))
@@ -168,7 +178,7 @@ class Kite(object):
         white_to_new_black = new_black_vector - white.vector
         direction = .5*(white_to_black + white_to_new_black)
         height = abs(black.vector - new_black_vector)
-        additonal_distance = height/length(direction)*math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
+        additonal_distance = height/abs(direction)*math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
         displacement = (1.0+additonal_distance)*direction
         new_white_vector = white.vector + displacement
         new_white = Vertex(tuple(new_white_vector), 'w')
