@@ -155,11 +155,28 @@ class  Edge(object):
 
 ''' Can make basic tiles, then make 'aware' tiles later'''
 
-class Kite(object):
-    def __init__(self, edge):
-        if edge.colour == 'g':
-            self.build_from_green(edge)
-        else: self.build_from_red(edge)
+class Tile(object):
+
+        def __init__(self, edge):
+            if edge.colour == 'g':
+                self.build_from_green(edge)
+            else: self.build_from_red(edge)
+
+        def build_from_green(edge):
+            raise NotImplemented
+
+        def build_from_red(edge):
+            raise NotImplemented
+
+        #this will be overridden for the aware tile
+        def assign(self, vertices, edges):
+            self.vertices = tuple(vertices)
+            self.edges = tuple(edges)
+
+        def __hash__(self):
+            return hash((self.vertices, self.edges))
+
+class Kite(Tile):
 
     def build_from_green(self, edge, clockwise=False):
         white, black = edge.white_black
@@ -170,6 +187,8 @@ class Kite(object):
         new_black_vector = white.rotate_vector(black, angle)
         new_black = Vertex(new_black_vector, 'b')
 
+        # getting the last vertex
+        # we bisect the two green edges and 
         white_to_black = black - white
         white_to_new_black = new_black - white
         direction = .5*(white_to_black + white_to_new_black)
@@ -179,16 +198,17 @@ class Kite(object):
         new_white_vector = white + displacement
         new_white = Vertex(tuple(new_white_vector), 'w')
         
-        self.vertices = [white, black, new_white, new_black]
-        self.edges = [  edge, 
+        # assign
+        vertices = white, black, new_white, new_black
+        edges = (  edge, 
                         Edge(black, new_white,'r'), 
                         Edge(new_white,new_black,'r'),
                         Edge(new_black, white, 'g')
-                    ]
+                    )
+        self.assign(vertices, edges)
 
     def __rep__(self):
         return 'Kite with '+str(self.vertices)
-
 
 
 
