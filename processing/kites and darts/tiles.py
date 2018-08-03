@@ -24,7 +24,8 @@ ROTATION_MATRICES ={
 FACTORS= {
     'green_kite': math.tan(0.1*math.pi),
     'red_kite': 1./math.tan(0.2*math.pi),
-    'green_dart': -math.tan(0.3*math.pi)
+    'green_dart': -math.tan(0.3*math.pi),
+    'red_dart': -math.cos(0.3*math.pi)
 }
 
 
@@ -209,77 +210,13 @@ class Tile(object):
             Scales it by (1+height/bisector*factor)
             and returns a new vertex, same colour as self, there.
         '''
-        bisector = 0.5*sum([v1-centre, v2-centre])
-        height = abs(v1-v2)
+        bisector = centre.bisect(v1, v2)
+        height = 0.5*abs(v1-v2)
         additonal_distance = height/abs(bisector)*factor
         displacement = (1.0+additonal_distance)*bisector
         return Vertex(displacement+centre, centre.colour)
 
 class Kite(Tile):
-
-    def build_from_green(self, edge, clockwise=False):
-        white, black = edge.white_black
-        # getting the other black edge
-        # need only to rotate the first one through 72 degrees
-        angle = 72 if not clockwise else -72
-        new_black = white.rotate_vertex(black, angle)
-        bisector = white.bisect(black, new_black)
-        height = abs(black-new_black)
-        additonal_scale = height/abs(bisector)*FACTORS['green_kite']
-        displacement = (1.0+additonal_scale)*bisector
-        new_white = Vertex(displacement+white, 'w')
-
-        # assign
-        vertices = white, black, new_white, new_black
-        edges = (  edge, 
-                        Edge(black, new_white,'r'), 
-                        Edge(new_white,new_black,'r'),
-                        Edge(new_black, white, 'g')
-                    )
-        self.assign(vertices, edges)
-
-    def build_from_red(self, edge, clockwise=False):
-        white, black = edge.white_black
-        # getting the other black edge
-        # need only to rotate the first one through 144 degrees
-        angle = 144 if not clockwise else -144
-        new_black = white.rotate_vertex(black, angle)
-        bisector = white.bisect(black, new_black)
-        height = abs(black-new_black)
-        additonal_scale =  height/abs(bisector)*FACTORS['red_kite']
-        displacement = (1.0+additonal_scale)*bisector
-        new_white = Vertex(displacement+white, 'w')
-
-        # assign
-        vertices = white, black, new_white, new_black
-        edges = (  edge, 
-                        Edge(black, new_white,'g'), 
-                        Edge(new_white,new_black,'g'),
-                        Edge(new_black, white, 'r')
-                    )
-        self.assign(vertices, edges)
-
-    def __rep__(self):
-        return 'Kite with '+str(self.vertices)
-
-
-class Dart(Tile):
-
-    def build_from_green(self, edge, clockwise=False):
-        white, black = edge.white_black
-        # getting the other black edge
-        # need only to rotate the first one through 72 degrees
-        angle = 72 if not clockwise else -72
-        new_white = black.rotate_vertex(white, angle)
-        new_black = self.bisect_and_scale(black, white, new_white,FACTORS['green_dart'])
-
-
-
-    def __rep__(self):
-        return 'Dart with '+str(self.vertices)
-
-
-class BetterKite(Kite):
 
     def build_from_green(self, edge, clockwise=False):
         white, black = edge.white_black
@@ -309,10 +246,62 @@ class BetterKite(Kite):
         # assign
         vertices = white, black, new_white, new_black
         edges = (  edge, 
+                        Edge(black, new_white,'g'), 
+                        Edge(new_white,new_black,'g'),
+                        Edge(new_black, white, 'r')
+                    )
+        self.assign(vertices, edges)
+
+    def __rep__(self):
+        return 'Kite with '+str(self.vertices)
+
+
+class Dart(Tile):
+
+    def build_from_green(self, edge, clockwise=False):
+        white, black = edge.white_black
+        # getting the other black edge
+        # need only to rotate the first one through 72 degrees
+        angle = 72 if not clockwise else -72
+        new_white = black.rotate_vertex(white, angle)
+        new_black = self.bisect_and_scale(black, white, new_white,FACTORS['green_dart'])
+
+        # assign
+        vertices = black, white, new_black, new_white
+        edges = (  edge, 
+                        Edge(white, new_black,'r'), 
+                        Edge(new_black, new_white,'r'),
+                        Edge(new_white, black, 'g')
+                    )
+        self.assign(vertices, edges)
+
+
+    def build_from_red(self, edge, clockwise=False):
+        white, black = edge.white_black
+        # getting the other black edge
+        # need only to rotate the first one through 72 degrees
+        angle = 144 if not clockwise else -144
+        new_white = black.rotate_vertex(white, angle)
+        bisector = black.bisect(white, new_white)
+        height = 0.5*abs(white-new_white)
+        scale = height/abs(bisector)*FACTORS['red_kite']
+        new_black = Vertex(black+scale*bisector, 'b')
+
+        # assign
+        vertices = black, new_white, new_black, white
+        edges = (  edge, 
                         Edge(black, new_white,'r'), 
-                        Edge(new_white,new_black,'r'),
+                        Edge(new_white, new_black,'g'),
                         Edge(new_black, white, 'g')
                     )
         self.assign(vertices, edges)
+
+
+    def __rep__(self):
+        return 'Dart with '+str(self.vertices)
+
+
+class BetterKite(Kite):
+    pass
 
 
