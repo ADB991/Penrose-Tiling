@@ -80,7 +80,7 @@ class Vector(list):
 
 
 class Vertex(Vector):
-    ''' A vertex has coordinates, and colour'''
+    ''' A vertex is a vector with colour'''
     def __init__(self, coords, colour):
         super(Vertex, self).__init__(coords)
         self.colour = colour
@@ -98,7 +98,8 @@ class Vertex(Vector):
 
     def __eq__(self, other):
         ''' Two vertices are the same if they share
-            coordinates and colour'''
+            coordinates and colour
+            Probably need to have a lenient version'''
         if self.colour == other.colour :
             return self.coords == other.coords
         else: return False
@@ -109,11 +110,11 @@ class Vertex(Vector):
 
 
 class  Edge(object):
-    ''' An edge has two edges and a colour'''
+    ''' An edge has two vertices and a colour'''
     def __init__(self, vertex1, vertex2, colour):
         if vertex1 == vertex2:
             print('Same vertices!!')
-        self.vertices = set([vertex1, vertex2])
+        self.vertices = (vertex1, vertex2)
         self.colour = colour
 
     def __repr__(self):
@@ -122,7 +123,7 @@ class  Edge(object):
         return colour+' edge between '+str(coords[0])+' and '+str(coords[1])
 
     def __hash__(self):
-        return hash(self.vertices, self.colour)
+        return hash((self.vertices, self.colour))
 
     def __eq__(self, other):
         '''Two edges are the same if they share colour
