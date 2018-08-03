@@ -15,6 +15,68 @@ the edges and vertices will be used to decide which shape to put
 import math
 
 
+class Vector(list):
+
+    def __init__(self, l=[]):
+        ''' converts to float to avoid surprises later on'''
+        if type(l) is not list:
+            raise ValueError
+        float_list = [float(x) for x in l]
+        super(Vector, self).__init__(float_list)
+
+    def __neg__(self):
+        return Vector([-x for x in self])
+
+    def __abs__(self):
+        return math.sqrt(sum([x**2 for x in self]))
+
+    def __add__(self, other):
+        if type(self) is type(other):
+            return self.vector_addition(other)
+        elif type(other) in (int, float):
+            return self.scalar_addition(other)
+        else:
+            raise ValueError
+
+    def __sub__(self, other):
+        return self + (-other)
+
+    def __mul__(self, other):
+        if type(self) is type(other):
+            return self.vector_multiplication(other)
+        elif type(other) in (int,float):
+            return self.scalar_multiplication(other)
+        else:
+            raise ValueError
+
+    #def __truediv__(self, other):
+
+
+    def __rmul__(self, other):
+        return self*other
+
+
+
+    def rotate_vector(self, other, angle):
+        # should work for any iterable
+        if type(other) is not Vector:
+            vec = Vector(other)
+        else: vec = other
+        diff = vec - self
+        cos, sin = math.cos(angle), math.sin(angle)
+        rotated = [cos*diff[0] - sin*diff[1], sin*diff[0] + cos*diff[1]]
+        return self + Vector(rotated)
+        
+
+    def vector_addition(self, other):
+        return Vector([x1+x2 for x1, x2 in zip(self,other)])
+    def scalar_addition(self, other):
+        return Vector([x1 + float(other) for x1 in self])
+    def vector_multiplication(self, other):
+        return Vector([x1*x2 for x1, x2 in zip(self,other)])
+    def scalar_multiplication(self, other):
+        return Vector([x1 * float(other) for x1 in self])
+
 def rotate(centre, point, angle):
     d = difference(centre, point)
     cos, sin = math.cos(angle), math.sin(angle)
@@ -53,6 +115,10 @@ class Vertex(object):
         if self.colour == other.colour :
             return self.coords == other.coords
         else: return False
+
+    @property
+    def vector(self):
+        return Vector(list(self.coords))
 
 
 class  Edge(object):
@@ -138,8 +204,31 @@ class Kite(object):
 
 
 
+class BetterKite(Kite):
+    def build_from_green(self, edge, clockwise=False):
+        white, black = edge.white_black
+        # getting the other black edge
+        # need only to rotate the first one through 72 degrees
+        angle = math.pi*2.0/5.0
+        if clockwise: angle *= -1
+        new_black_vector = (white.vector).rotate_vector(black.vector, angle)
+        new_black = Vertex(tuple(new_black_vector), 'b')
 
-
+        white_to_black = black.vector - white.vector
+        white_to_new_black = new_black_vector - white.vector
+        direction = .5*(white_to_black + white_to_new_black)
+        height = abs(black.vector - new_black_vector)
+        additonal_distance = height/length(direction)*math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
+        displacement = (1.0+additonal_distance)*direction
+        new_white_vector = white.vector + displacement
+        new_white = Vertex(tuple(new_white_vector), 'w')
+        
+        self.vertices = [white, black, new_white, new_black]
+        self.edges = [  edge, 
+                        Edge(black, new_white,'r'), 
+                        Edge(new_white,new_black,'r'),
+                        Edge(new_black, white, 'g')
+                    ]
 
 
 
