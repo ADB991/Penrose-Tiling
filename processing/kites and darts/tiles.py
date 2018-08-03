@@ -24,7 +24,7 @@ ROTATION_MATRICES ={
 FACTORS= {
     'green_kite': math.tan(0.1*math.pi),
     'red_kite': 1./math.tan(0.2*math.pi),
-    'green_dart': -math.tan(0.3*math.pi),
+    'green_dart': -math.tan(0.1*math.pi),
     'red_dart': -math.cos(0.3*math.pi)
 }
 
@@ -264,7 +264,7 @@ class Dart(Tile):
         # need only to rotate the first one through 72 degrees
         angle = 72 if not clockwise else -72
         new_white = black.rotate_vertex(white, angle)
-        new_black = self.bisect_and_scale(black, white, new_white,FACTORS['green_dart'])
+        new_black = self.bisect_and_scale(black, white, new_white, FACTORS['green_dart'])
 
         # assign
         vertices = black, white, new_black, new_white
@@ -284,7 +284,7 @@ class Dart(Tile):
         new_white = black.rotate_vertex(white, angle)
         bisector = black.bisect(white, new_white)
         height = 0.5*abs(white-new_white)
-        scale = height/abs(bisector)*FACTORS['red_kite']
+        scale = height/abs(bisector)*FACTORS['red_dart']
         new_black = Vertex(black+scale*bisector, 'b')
 
         # assign
