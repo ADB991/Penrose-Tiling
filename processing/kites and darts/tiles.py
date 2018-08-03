@@ -37,12 +37,10 @@ class Vector(list):
         return list(self) == list(other)
 
     def __add__(self, other):
-        if type(self) is type(other):
-            return self.vector_addition(other)
-        elif type(other) in (int, float):
+        if type(other) in (int, float):
             return self.scalar_addition(other)
         else:
-            raise ValueError
+            return self.vector_addition(other)
 
     def __sub__(self, other):
         return self + (-other)
@@ -55,7 +53,8 @@ class Vector(list):
         else:
             raise ValueError
 
-    #def __truediv__(self, other):
+    def __truediv__(self, other):
+        return self*float(1/other)
 
 
     def __rmul__(self, other):
@@ -64,11 +63,7 @@ class Vector(list):
 
 
     def rotate_vector(self, other, angle):
-        # should work for any iterable
-        if type(other) is not Vector:
-            vec = Vector(other)
-        else: vec = other
-        diff = vec - self
+        diff = other - self
         cos, sin = math.cos(angle), math.sin(angle)
         rotated = [cos*diff[0] - sin*diff[1], sin*diff[0] + cos*diff[1]]
         return self + Vector(rotated)
