@@ -167,16 +167,16 @@ class Kite(object):
         # need only to rotate the first one through 72 degrees
         angle = math.pi*2.0/5.0
         if clockwise: angle *= -1
-        new_black_vector = (white.vector).rotate_vector(black.vector, angle)
-        new_black = Vertex(tuple(new_black_vector), 'b')
+        new_black_vector = white.rotate_vector(black, angle)
+        new_black = Vertex(new_black_vector, 'b')
 
-        white_to_black = black.vector - white.vector
-        white_to_new_black = new_black_vector - white.vector
+        white_to_black = black - white
+        white_to_new_black = new_black - white
         direction = .5*(white_to_black + white_to_new_black)
-        height = abs(black.vector - new_black_vector)
+        height = abs(black - new_black)
         additonal_distance = height/abs(direction)*math.cos(0.2*math.pi)/math.tan(0.1*math.pi)
         displacement = (1.0+additonal_distance)*direction
-        new_white_vector = white.vector + displacement
+        new_white_vector = white + displacement
         new_white = Vertex(tuple(new_white_vector), 'w')
         
         self.vertices = [white, black, new_white, new_black]
