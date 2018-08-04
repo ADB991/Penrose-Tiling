@@ -237,7 +237,7 @@ class Tile(object):
         self.assign(vertices, edges)
 
     #these two methods be overridden for the aware tile
-    def assign_definition(edge, clockwise):
+    def assign_definition(self, edge, clockwise):
         self.definition = (edge, clockwise)
 
     def assign(self, vertices, edges):
