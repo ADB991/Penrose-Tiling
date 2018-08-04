@@ -164,41 +164,44 @@ class  Edge(object):
     def __contains__(self, vertex):
         return vertex in self.vertices
 
+    def contains_point(self, vertex):
+        pass
 
-    def to_the_right(self, vertex):
+    def to_the_right(self, vertex, allow_crossing_horizontal=False):
         ''' Returns True if an horizontal half-line extending to
-            the right would cross the edge
+            the right would cross the edge.
+            Assumes the point is *not on* the edge,
+            in which case the question is ill-posed
         '''
-        coords1, coords2 = self.coords
-        if (vertex.coords == coords1 or vertex.coords == coords2):
-            return True
-        y_coords = tuple(xy[1] for xy in (coords1, coords2, vertex.coords))
-        coincide = len(set(y_coords)) < 3
-        # if point is too high or too low, line will miss the edge
-        if (y_coords[-1] in (min(y_coords), max(y_coords))) and not coincide:
-            return False
-        x_coords = tuple(xy[0] for xy in (coords1, coords2, vertex.coords))
-        # if point is to the left of both, then sure hit
-        if (vertex.coords)[0] == min(x_coords):
-            return True
-        # if point is to the right of both, sure miss
-        if (vertex.coords)[0] == max(x_coords):
-            return False
-        # edge case left: the point is in the rectangle
-        # whose diagonal is the edge, pull out some algebra
         a, b = self.line_coefficients()
-        line_y = a*vertex.coords[0] + b
-        diff = line_y - vertex.coords[1]
-        if diff == 0:
-            return True # the point is *on* the line
-        point_below_line =  diff > 0
-        line_going_down = (a<0) 
-        return point_below_line == line_going_down
+        v_coords = vertex.coords
+        coords1, coords2 = self.coords
+        x_coords = (coords1[0], coords2[0])
+        y_coords = (coords1[1], coords2[1])
+        if a == 0:
+            if not allow_crossing_horizontal:
+                return False
+            return v_coords[1] == coords1[1]
+        else:
+            #determine if it is in the corridor
+            is_above = v_coords[1] >= max(y_coords)
+            is_below = v_coords[1] < min(y_coords)
+            is_to_the_right = v_coords[0] >= max(x_coords)
+            if (is_above or is_below or is_to_the_right):
+                return False
+            #if we get here the point is in the corridor
+            # to the left of the edge
+            # if the line is vertical, it's a sure hit
+            if a is None:
+                return True
+            point_below_line = v_coords[1] < (a*v_coords[0]+b)
+            line_going_down = (a<0)   
         #point below    line going down     cross
         #no             no                  yes
         #no             yes                 no
         #yes            no                  no
         #yes            yes                 no
+            return point_below_line == line_going_down
 
 
     @property
@@ -225,7 +228,7 @@ class  Edge(object):
         y = ax + b of the line on which the edge lies'''
         coords1, coords2 = self.coords
         delta_x, delta_y = (coords2[i] - coords1[i] for i in range(2))
-        a = delta_y / delta_x
+        a = delta_y / delta_x if delta_x != 0 else None
         b = coords1[1]-a*coords1[0]
         return a, b
 
