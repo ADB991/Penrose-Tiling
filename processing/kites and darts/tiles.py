@@ -170,11 +170,11 @@ class  Edge(object):
             the right would cross the edge
         '''
         coords1, coords2 = self.coords
-        y_coords = (xy[1] for xy in (coords1, coords2, vertex.coords))
+        y_coords = tuple(xy[1] for xy in (coords1, coords2, vertex.coords))
         # if point is too high or too low, line will miss the edge
         if (vertex.coords)[1] in (min(y_coords), max(y_coords)):
             return False
-        x_coords = (xy[0] for xy in (coords1, coords2, vertex.coords))
+        x_coords = tuple(xy[0] for xy in (coords1, coords2, vertex.coords))
         # if point is to the left of both, then sure hit
         if (vertex.coords)[0] == min(x_coords):
             return True
