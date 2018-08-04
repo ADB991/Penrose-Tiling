@@ -192,26 +192,25 @@ class  Edge(object):
             if not allow_crossing_horizontal:
                 return False
             return y == coords1[1]
-        else:
-            #determine if it is in the corridor
-            is_above = y >= max(y_coords)
-            is_below = x < min(y_coords)
-            is_to_the_right = x >= max(x_coords)
-            if (is_above or is_below or is_to_the_right):
-                return False
-            #if we get here the point is in the corridor
-            # to the left of the edge
-            # if the line is vertical, it's a sure hit
-            if a is None:
-                return True
-            point_below_line = y < (a*x+b)
-            line_going_down = (a<0)   
-        #point below    line going down     cross
-        #no             no                  yes
-        #no             yes                 no
-        #yes            no                  no
-        #yes            yes                 no
-            return point_below_line == line_going_down
+        #determine if it is in the corridor
+        is_above = y >= max(y_coords)
+        is_below = x < min(y_coords)
+        is_to_the_right = x >= max(x_coords)
+        if (is_above or is_below or is_to_the_right):
+            return False
+        #if we get here the point is in the corridor
+        # to the left of the edge
+        # if the line is vertical, it's a sure hit
+        if a is None:
+            return True
+        point_below_line = y < (a*x+b)
+        line_going_down = (a<0)   
+    #point below    line going down     cross
+    #no             no                  yes
+    #no             yes                 no
+    #yes            no                  no
+    #yes            yes                 no
+        return point_below_line == line_going_down
 
 
     @property
@@ -285,6 +284,16 @@ class Tile(object):
         additonal_distance = height/abs(bisector)*factor
         displacement = (1.0+additonal_distance)*bisector
         return Vertex(displacement+centre, centre.colour)
+
+    def covers(self, vertex):
+        ''' tests wether the vertex is on the edges
+        or inside the area of the tile'''
+        for edge in self.edges:
+            if edge.contains_point(vertex): return True
+        num_crossings = sum([edge.to_the_right(vertex) for edge in self.edges])
+        return (num_crossings%2 == 1)
+
+
 
 class Kite(Tile):
 
