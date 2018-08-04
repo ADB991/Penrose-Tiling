@@ -165,7 +165,17 @@ class  Edge(object):
         return vertex in self.vertices
 
     def contains_point(self, vertex):
-        pass
+        a, b = self.line_coefficients()
+        x, y = vertex.coords
+        coords1, coords2 = self.coords
+        x_coords = (coords1[0], coords2[0])
+        y_coords = (coords1[1], coords2[1])
+        in_rectangle =(
+             (min(x_coords) <= x ) and (max(x_coords) >= x)
+             and (min(y_coords) <= y ) and (max(y_coords) >= y)
+            )
+        if in_rectangle: return y == a*x+b
+        else: return False
 
     def to_the_right(self, vertex, allow_crossing_horizontal=False):
         ''' Returns True if an horizontal half-line extending to
@@ -174,19 +184,19 @@ class  Edge(object):
             in which case the question is ill-posed
         '''
         a, b = self.line_coefficients()
-        v_coords = vertex.coords
+        x, y = vertex.coords
         coords1, coords2 = self.coords
         x_coords = (coords1[0], coords2[0])
         y_coords = (coords1[1], coords2[1])
         if a == 0:
             if not allow_crossing_horizontal:
                 return False
-            return v_coords[1] == coords1[1]
+            return y == coords1[1]
         else:
             #determine if it is in the corridor
-            is_above = v_coords[1] >= max(y_coords)
-            is_below = v_coords[1] < min(y_coords)
-            is_to_the_right = v_coords[0] >= max(x_coords)
+            is_above = y >= max(y_coords)
+            is_below = x < min(y_coords)
+            is_to_the_right = x >= max(x_coords)
             if (is_above or is_below or is_to_the_right):
                 return False
             #if we get here the point is in the corridor
@@ -194,7 +204,7 @@ class  Edge(object):
             # if the line is vertical, it's a sure hit
             if a is None:
                 return True
-            point_below_line = v_coords[1] < (a*v_coords[0]+b)
+            point_below_line = y < (a*x+b)
             line_going_down = (a<0)   
         #point below    line going down     cross
         #no             no                  yes
