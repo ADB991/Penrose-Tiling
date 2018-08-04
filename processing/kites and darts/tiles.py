@@ -164,6 +164,37 @@ class  Edge(object):
     def __contains__(self, vertex):
         return vertex in self.vertices
 
+
+    def to_the_right(self, vertex):
+        ''' Returns True if an horizontal half-line extending to
+            the right would cross the edge
+        '''
+        coords1, coords2 = self.coords
+        y_coords = (xy[1] for xy in (coords1, coords2, vertex.coords))
+        # if point is too high or too low, line will miss the edge
+        if (vertex.coords)[1] in (min(y_coords), max(y_coords)):
+            return False
+        x_coords = (xy[0] for xy in (coords1, coords2, vertex.coords))
+        # if point is to the left of both, then sure hit
+        if (vertex.coords)[0] == min(x_coords):
+            return True
+        # if point is to the right of both, sure miss
+        if (vertex.coords)[0] == max(x_coords):
+            return False
+        # edge case left: the point is in the rectangle
+        # whose diagonal is the edge, pull out some algebra
+        a, b = self.line_coefficients()
+        line_y = a*vertex.coords[0] + b
+        point_below_line = line_y > vertex.coords[1]
+        line_going_down = (a<0) #the case a == 0 is ruled out
+        return point_below_line == line_going_down
+        #point below    line going down     cross
+        #no             no                  yes
+        #no             yes                 no
+        #yes            no                  no
+        #yes            yes                 no
+
+
     @property
     def white_vertex(self):
         for v in self.vertices:
@@ -178,17 +209,40 @@ class  Edge(object):
     @property
     def white_black(self):
         return (self.white_vertex, self.black_vertex)
+
+    @property
+    def coords(self):
+        return (v.coords for v in self.vertices)
     
+    def line_coefficients(self):
+        '''returns a and b in the equation
+        y = ax + b of the line on which the edge lies'''
+        coords1, coords2 = self.coords
+        delta_x, delta_y = (coords2[i] - coords1[i] for i in range(2))
+        a = delta_y / delta_x
+        b = coords1[1]-a*coords1[0]
+        return a, b
 
 
 ''' Can make basic tiles, then make 'aware' tiles later'''
 
 class Tile(object):
 
-    def __init__(self, edge,clockwise=False):
+    def __init__(self, edge, clockwise=False):
         if edge.colour == 'g':
-            self.build_from_green(edge,clockwise)
-        else: self.build_from_red(edge,clockwise)
+            vertices, edges = self.build_from_green(edge,clockwise)
+        else: 
+            vertices, edges = self.build_from_red(edge,clockwise)
+        self.assign_definition(edge, clockwise)
+        self.assign(vertices, edges)
+
+    #these two methods be overridden for the aware tile
+    def assign_definition(edge, clockwise):
+        self.definition = (edge, clockwise)
+
+    def assign(self, vertices, edges):
+        self.vertices = tuple(vertices)
+        self.edges = tuple(edges)
 
     def build_from_green(edge):
         raise NotImplemented
@@ -196,10 +250,7 @@ class Tile(object):
     def build_from_red(edge):
         raise NotImplemented
 
-    #this will be overridden for the aware tile
-    def assign(self, vertices, edges):
-        self.vertices = tuple(vertices)
-        self.edges = tuple(edges)
+
 
     def __hash__(self):
         return hash((self.vertices, self.edges))
@@ -233,7 +284,7 @@ class Kite(Tile):
                         Edge(new_white,new_black,'r'),
                         Edge(new_black, white, 'g')
                     )
-        self.assign(vertices, edges)
+        return vertices, edges
 
     def build_from_red(self, edge, clockwise=False):
         white, black = edge.white_black
@@ -250,7 +301,7 @@ class Kite(Tile):
                         Edge(new_white,new_black,'g'),
                         Edge(new_black, white, 'r')
                     )
-        self.assign(vertices, edges)
+        return vertices, edges
 
     def __rep__(self):
         return 'Kite with '+str(self.vertices)
@@ -273,7 +324,7 @@ class Dart(Tile):
                         Edge(new_black, new_white,'r'),
                         Edge(new_white, black, 'g')
                     )
-        self.assign(vertices, edges)
+        return vertices, edges
 
 
     def build_from_red(self, edge, clockwise=False):
@@ -294,7 +345,7 @@ class Dart(Tile):
                         Edge(new_white, new_black,'g'),
                         Edge(new_black, white, 'g')
                     )
-        self.assign(vertices, edges)
+        return vertices, edges
 
 
     def __rep__(self):
@@ -319,7 +370,7 @@ def star(edge):
     return tile_list
 
 def sun(edge):
-    '''returns a list of tiles in the shape of a star'''
+    '''returns a list of tiles in the shape of a sun'''
     if edge.colour != 'g':
         raise ValueError
     tile_list = []
