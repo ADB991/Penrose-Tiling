@@ -1,17 +1,20 @@
 '''
-this is different from the pentagon version
-because we need to grow the tiling out
-we will need ways of telling which tiles are on the border
-and which of those are adjacent
+Here we have the basic geometric objects and methods
 
+Vector is a vector class with nothing special
+except for memorised rotrions for the angles used here.
 
-probably the best will be to have edge and vertex objects
-with methods to compare if they are the same.
-then the tiles will have edges and vertices
+A Vertex is little more than a vector with colour.
 
-the edges and vertices will be used to decide which shape to put
+An Edge is composed of two Vertex and colour,
+it has a little more geometrical awareness to deal
+
+A Tile is a class with a list of vertices and edges,
+it's a basis class for our two other classes:
+
+Kite and Dart which differ only on how they build themselves
+
 '''
-
 import math
 
 ROTATION_MATRICES ={
@@ -85,6 +88,9 @@ class Vector(list):
             cos, sin = math.cos(angle), math.sin(angle)
         rotated = [cos*diff[0] - sin*diff[1], sin*diff[0] + cos*diff[1]]
         return self + Vector(rotated)
+
+    def bisect(self, v1, v2):
+        return 0.5*sum([v1-self, v2-self])
         
 
     def vector_addition(self, other):
@@ -130,9 +136,6 @@ class Vertex(Vector):
         ''' Returns a vertex same colour as other, 
         rotated about self by angle'''
         return Vertex(self.rotate_vector(other, angle), other.colour)
-
-    def bisect(self, v1, v2):
-        return 0.5*sum([v1-self, v2-self])
 
 
 
