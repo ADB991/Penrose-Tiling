@@ -170,9 +170,12 @@ class  Edge(object):
             the right would cross the edge
         '''
         coords1, coords2 = self.coords
+        if (vertex.coords == coords1 or vertex.coords == coords2):
+            return True
         y_coords = tuple(xy[1] for xy in (coords1, coords2, vertex.coords))
+        coincide = len(set(y_coords)) < 3
         # if point is too high or too low, line will miss the edge
-        if (vertex.coords)[1] in (min(y_coords), max(y_coords)):
+        if (y_coords[-1] in (min(y_coords), max(y_coords))) and not coincide:
             return False
         x_coords = tuple(xy[0] for xy in (coords1, coords2, vertex.coords))
         # if point is to the left of both, then sure hit
@@ -185,8 +188,11 @@ class  Edge(object):
         # whose diagonal is the edge, pull out some algebra
         a, b = self.line_coefficients()
         line_y = a*vertex.coords[0] + b
-        point_below_line = line_y > vertex.coords[1]
-        line_going_down = (a<0) #the case a == 0 is ruled out
+        diff = line_y - vertex.coords[1]
+        if diff == 0:
+            return True # the point is *on* the line
+        point_below_line =  diff > 0
+        line_going_down = (a<0) 
         return point_below_line == line_going_down
         #point below    line going down     cross
         #no             no                  yes
